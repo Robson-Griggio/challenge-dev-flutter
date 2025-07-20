@@ -1,4 +1,4 @@
-import 'package:challenge_dev_flutter/ui/home_page/view_model/home_page_screen.dart';
+import 'package:challenge_dev_flutter/ui/home_page/widgets/home_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
