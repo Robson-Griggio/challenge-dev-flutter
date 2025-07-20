@@ -1,7 +1,7 @@
-import 'package:challenge_dev_flutter/domain/dtos/student_dto.dart';
+import 'package:challenge_dev_flutter/domain/dtos/add_student_dto.dart';
 
-class StudentValidator {
-  Map<String, String> validate(StudentDto student) {
+class AddStudentValidator {
+  Map<String, String> validate(AddStudentDto student) {
     final errors = <String, String>{};
 
     if (student.name.trim().isEmpty) {
