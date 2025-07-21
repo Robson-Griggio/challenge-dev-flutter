@@ -33,16 +33,12 @@ final GoRouter _router = GoRouter(
               create: (context) =>
                   StudentRepository(service: context.read<StudentService>()),
             ),
+            ChangeNotifierProvider(
+              create: (context) =>
+                  HomePageViewModel(context.read<StudentRepository>()),
+            ),
           ],
-          child: Builder(
-            builder: (context) {
-              final viewModel = HomePageViewModel(
-                context.read<StudentRepository>(),
-              );
-
-              return HomePageScreen(viewModel: viewModel);
-            },
-          ),
+          child: const HomePageScreen(),
         );
       },
     ),
