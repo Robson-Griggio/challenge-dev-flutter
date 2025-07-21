@@ -1,33 +1,42 @@
 import 'dart:async';
-
-import 'package:challenge_dev_flutter/utils/result_pattern.dart';
 import 'package:flutter/foundation.dart';
 
-typedef CommandAction0<T> = Future<Result<T>> Function();
-typedef CommandAction1<T, A> = Future<Result<T>> Function(A);
+typedef CommandAction0<T> = Future<T> Function();
+typedef CommandAction1<T, A> = Future<T> Function(A);
 
 abstract class Command<T> extends ChangeNotifier {
   bool _running = false;
   bool get running => _running;
 
-  Result<T>? _result;
-  bool get error => _result is Error;
-  bool get completed => _result is Ok;
-  Result<T>? get result => _result;
+  T? _data;
+  T? get data => _data;
+
+  Object? _error;
+  Object? get error => _error;
+  bool get hasError => _error != null;
+  bool get isCompleted => _data != null && _error == null;
+  bool get hasResult => _data != null || _error != null;
 
   void clearResult() {
-    _result = null;
+    _data = null;
+    _error = null;
     notifyListeners();
   }
 
   Future<void> _execute(CommandAction0<T> action) async {
     if (_running) return;
+
     _running = true;
-    _result = null;
+    _data = null;
+    _error = null;
     notifyListeners();
 
     try {
-      _result = await action();
+      _data = await action();
+      _error = null;
+    } catch (e) {
+      _error = e;
+      _data = null;
     } finally {
       _running = false;
       notifyListeners();
