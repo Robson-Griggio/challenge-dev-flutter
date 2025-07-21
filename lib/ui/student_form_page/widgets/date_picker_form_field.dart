@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DatePickerFormField extends StatefulWidget {
-  const DatePickerFormField({super.key});
+  final Function onSaved;
+  const DatePickerFormField({super.key, required this.onSaved});
 
   @override
   State<DatePickerFormField> createState() => _DatePickerFormFieldState();
@@ -45,6 +46,7 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
         }
         return null;
       },
+      onSaved: (newValue) => widget.onSaved(newValue),
     );
   }
 }

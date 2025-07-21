@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:challenge_dev_flutter/config/api_constants.dart';
 import 'package:challenge_dev_flutter/domain/dtos/add_student_dto.dart';
+import 'package:challenge_dev_flutter/domain/dtos/update_student_dto.dart';
 import 'package:challenge_dev_flutter/utils/http_client.dart';
 import 'package:challenge_dev_flutter/domain/dtos/list_student_dto.dart';
 
@@ -42,7 +43,7 @@ class StudentService {
     }
   }
 
-  Future<void> updateStudent(AddStudentDto student) async {
+  Future<void> updateStudent(UpdateStudentDto student) async {
     final response = await _httpClient.put(
       _studentUrl,
       jsonEncode(student.toJson()),

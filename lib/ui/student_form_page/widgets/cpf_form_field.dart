@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CpfFormField extends StatelessWidget {
-  const CpfFormField({super.key});
+  final Function onSaved;
+  const CpfFormField({super.key, required this.onSaved});
 
   // Instância do formatador da máscara para o CPF
   static final _cpfMaskFormatter = MaskTextInputFormatter(
@@ -41,6 +42,7 @@ class CpfFormField extends StatelessWidget {
         }
         return null;
       },
+      onSaved: (newValue) => onSaved(newValue),
     );
   }
 }

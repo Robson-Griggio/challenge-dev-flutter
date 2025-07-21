@@ -4,6 +4,7 @@ import 'package:challenge_dev_flutter/ui/student_form_page/view_model/student_fo
 import 'package:challenge_dev_flutter/ui/student_form_page/widgets/cpf_form_field.dart';
 import 'package:challenge_dev_flutter/ui/student_form_page/widgets/date_picker_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class StudentFormScreen extends StatelessWidget {
   final StudentFormViewModel viewModel;
@@ -11,6 +12,46 @@ class StudentFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    VoidCallback? _showSuccessDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: const Text('Aluno adicionado'),
+            content: const Text('O aluno foi adicionado com sucesso!'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Ok'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    // VoidCallback? _showFailureDialog() {
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext ctx) {
+    //       return AlertDialog(
+    //         title: const Text('Aluno adicionado'),
+    //         content: const Text('O aluno foi adicionado com sucesso!'),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: const Text('Ok'),
+    //             onPressed: () {
+    //               Navigator.of(ctx).pop();
+    //             },
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // }
+
     return Scaffold(
       backgroundColor: Color(0xFF2E7D8A),
       appBar: DefaultAppBar(title: 'Adicionar Aluno'),
@@ -39,23 +80,29 @@ class StudentFormScreen extends StatelessWidget {
                     }
                     return null;
                   },
+                  onSaved: (newValue) => viewModel.name = newValue,
                 ),
                 const SizedBox(height: 16),
-                const DatePickerFormField(),
+                DatePickerFormField(
+                  onSaved: (newValue) => viewModel.birthdate = newValue,
+                ),
                 const SizedBox(height: 16),
-                const CpfFormField(),
+                CpfFormField(onSaved: (newValue) => viewModel.cpf = newValue),
                 SizedBox(height: 16),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Registro acadêmico*',
                     border: const OutlineInputBorder(),
                   ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira o registro acadêmico.';
                     }
                     return null;
                   },
+                  onSaved: (newValue) => viewModel.academicRecord = newValue,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -82,17 +129,12 @@ class StudentFormScreen extends StatelessWidget {
                     }
                     return null;
                   },
+                  onSaved: (newValue) => viewModel.email = newValue,
                 ),
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (viewModel.formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Data')),
-                        );
-                      }
-                    },
+                    onPressed: () => viewModel.submitForm(_showSuccessDialog),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2E7D8A),
                       padding: const EdgeInsets.symmetric(
