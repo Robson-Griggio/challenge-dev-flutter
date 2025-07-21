@@ -18,14 +18,16 @@ class DialogUtils {
   static void showFailureDialog(
     BuildContext context,
     String title,
-    String message,
-  ) {
+    String message, {
+    VoidCallback? onConfirm,
+  }) {
     _showDialog(
       context,
       title: title,
       message: message,
       icon: Icons.error,
       iconColor: Colors.red,
+      onConfirm: onConfirm,
     );
   }
 
@@ -35,6 +37,7 @@ class DialogUtils {
     required String message,
     required IconData icon,
     required Color iconColor,
+    VoidCallback? onConfirm,
   }) {
     showDialog(
       context: context,
@@ -60,6 +63,7 @@ class DialogUtils {
               ),
               child: const Text('OK'),
               onPressed: () {
+                onConfirm?.call();
                 Navigator.of(ctx).pop();
               },
             ),

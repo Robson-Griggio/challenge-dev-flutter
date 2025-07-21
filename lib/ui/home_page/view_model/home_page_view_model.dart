@@ -13,4 +13,19 @@ class HomePageViewModel extends ChangeNotifier {
   }
 
   get reloadAllStudents => getAllStudentsCommand.execute();
+
+  Future<void> deleteStudent({
+    required String id,
+    required VoidCallback onSuccess,
+    required VoidCallback onError,
+  }) async {
+    try {
+      await _studentRepository.deleteStudent(id);
+      onSuccess();
+    } catch (e) {
+      onError();
+    }
+
+    reloadAllStudents();
+  }
 }

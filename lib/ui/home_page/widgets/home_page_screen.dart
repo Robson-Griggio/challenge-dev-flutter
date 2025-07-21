@@ -2,15 +2,18 @@ import 'package:challenge_dev_flutter/ui/core/ui/default_app_bar.dart';
 import 'package:challenge_dev_flutter/ui/core/ui/default_navigation_bar.dart';
 import 'package:challenge_dev_flutter/ui/home_page/view_model/home_page_view_model.dart';
 import 'package:challenge_dev_flutter/ui/home_page/widgets/student_card.dart';
+import 'package:challenge_dev_flutter/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class HomePageScreen extends StatelessWidget {
-  final HomePageViewModel viewModel;
-  const HomePageScreen({super.key, required this.viewModel});
+  const HomePageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<HomePageViewModel>();
+
     final studentsCommand = viewModel.getAllStudentsCommand;
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -79,13 +82,35 @@ class HomePageScreen extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 12),
                       child: StudentCard(
                         student: student,
-                        onEdit: () => context.push(
-                          Uri(
-                            path: '/student/edit',
-                            queryParameters: {'id': student.id},
-                          ).toString(),
-                        ),
-                        onDelete: () => print('ID: ${student.id}'),
+                        onEdit: () async {
+                          await context.push(
+                            Uri(
+                              path: '/student/edit',
+                              queryParameters: {'id': student.id},
+                            ).toString(),
+                          );
+                          viewModel.reloadAllStudents();
+                        },
+                        onDelete: () {
+                          DialogUtils.showFailureDialog(
+                            context,
+                            'Excluir Aluno',
+                            'Tem certeza que deseja excluir esse aluno? Todas as informações dele serão apagadas!',
+                            onConfirm: () => viewModel.deleteStudent(
+                              id: student.id,
+                              onSuccess: () => DialogUtils.showSuccessDialog(
+                                context,
+                                'Sucesso',
+                                'Aluno excluido com sucesso!',
+                              ),
+                              onError: () => DialogUtils.showFailureDialog(
+                                context,
+                                'Erro',
+                                'Não foi possível excluir este aluno!',
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
@@ -96,7 +121,10 @@ class HomePageScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/student/add'),
+        onPressed: () async {
+          await context.push('/student/add');
+          viewModel.reloadAllStudents();
+        },
         backgroundColor: Color(0xFF2E7D8A),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text('Adicionar aluno', style: TextStyle(color: Colors.white)),
