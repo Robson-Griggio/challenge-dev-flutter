@@ -17,6 +17,34 @@ class HomePageScreen extends StatelessWidget {
       appBar: DefaultAppBar(title: 'Alunos'),
       body: Column(
         children: [
+          Container(
+            margin: EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400, width: 1.5),
+              borderRadius: BorderRadius.circular(8.0),
+              color: Colors.white,
+            ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar...',
+                hintStyle: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 16.0,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.grey.shade600,
+                  size: 20.0,
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 14.0,
+                ),
+              ),
+              style: TextStyle(fontSize: 16.0, color: Colors.black87),
+            ),
+          ),
           Expanded(
             child: ListenableBuilder(
               listenable: studentsCommand,

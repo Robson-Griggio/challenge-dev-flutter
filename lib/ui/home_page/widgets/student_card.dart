@@ -44,12 +44,12 @@ class StudentCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    student.id,
+                    student.academicRecord,
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   SizedBox(height: 2),
                   Text(
-                    student.cpf,
+                    'CPF: ${student.cpf}',
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
