@@ -66,18 +66,17 @@ final GoRouter _router = GoRouter(
               create: (context) =>
                   StudentRepository(service: context.read<StudentService>()),
             ),
-          ],
-          child: Builder(
-            builder: (context) {
-              final viewModel = StudentFormViewModel(
+
+            ChangeNotifierProvider(
+              create: (context) => StudentFormViewModel(
                 context.read<StudentRepository>(),
+                context: context,
                 studentId: id,
                 isEditMode: action == 'edit',
-              );
-
-              return StudentFormScreen(viewModel: viewModel);
-            },
-          ),
+              ),
+            ),
+          ],
+          child: const StudentFormScreen(),
         );
       },
     ),

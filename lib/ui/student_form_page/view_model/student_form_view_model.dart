@@ -1,6 +1,7 @@
 import 'package:challenge_dev_flutter/data/repositories/student_repository.dart';
 import 'package:challenge_dev_flutter/domain/dtos/add_student_dto.dart';
 import 'package:challenge_dev_flutter/domain/dtos/update_student_dto.dart';
+import 'package:challenge_dev_flutter/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,16 +9,20 @@ class StudentFormViewModel extends ChangeNotifier {
   final StudentRepository _studentRepository;
   final bool isEditMode;
   final String? studentId;
+  final BuildContext context;
 
   StudentFormViewModel(
     this._studentRepository, {
+    required this.context,
     this.studentId,
     this.isEditMode = false,
   }) {
     if (isEditMode && studentId != null) {
-      _loadStudentData();
+      _loadStudentData(context);
     }
   }
+
+  bool _isFormLoading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,6 +41,8 @@ class StudentFormViewModel extends ChangeNotifier {
 
   GlobalKey<FormState> get formKey => _formKey;
 
+  bool get isFormLoading => _isFormLoading;
+
   String _formatCpf(String cpf) {
     // Remove qualquer formatação existente
     cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
@@ -48,7 +55,7 @@ class StudentFormViewModel extends ChangeNotifier {
     return cpf;
   }
 
-  Future<void> _loadStudentData() async {
+  Future<void> _loadStudentData(BuildContext context) async {
     try {
       final student = await _studentRepository.getStudentById(studentId!);
 
@@ -59,11 +66,15 @@ class StudentFormViewModel extends ChangeNotifier {
       _cpfController.text = _formatCpf(student.cpf);
       _academicRecordController.text = student.academicRecord;
       _emailController.text = student.email;
-
       notifyListeners();
     } catch (e) {
-      // TODO melhorar esse tratamento de erro com um dialog utils
-      print('Erro ao carregar dados do estudante: $e');
+      if (context.mounted) {
+        DialogUtils.showFailureDialog(
+          context,
+          'Erro',
+          'Erro ao carregar dados do estudante',
+        );
+      }
     }
   }
 
@@ -102,12 +113,23 @@ class StudentFormViewModel extends ChangeNotifier {
   }
 
   Future<void> submitForm(VoidCallback onSuccess, VoidCallback onError) async {
-    if (!_formKey.currentState!.validate()) return;
+    _isFormLoading = true;
+    notifyListeners();
+
+    if (!_formKey.currentState!.validate()) {
+      _isFormLoading = false;
+      notifyListeners();
+      return;
+    }
+
     if (!isEditMode && studentId == null) {
       await addStudent(onSuccess, onError);
     } else {
       await editStudent(onSuccess, onError);
     }
+
+    _isFormLoading = false;
+    notifyListeners();
   }
 
   @override

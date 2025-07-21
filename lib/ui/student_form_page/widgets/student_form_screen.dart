@@ -6,13 +6,15 @@ import 'package:challenge_dev_flutter/ui/student_form_page/widgets/date_picker_f
 import 'package:challenge_dev_flutter/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class StudentFormScreen extends StatelessWidget {
-  final StudentFormViewModel viewModel;
-  const StudentFormScreen({super.key, required this.viewModel});
+  const StudentFormScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<StudentFormViewModel>();
+
     return Scaffold(
       backgroundColor: Color(0xFF2E7D8A),
       appBar: DefaultAppBar(
@@ -101,30 +103,32 @@ class StudentFormScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () => viewModel.submitForm(
-                      () {
-                        Navigator.of(context).pop();
-                        DialogUtils.showSuccessDialog(
-                          context,
-                          viewModel.isEditMode
-                              ? 'Aluno editado'
-                              : 'Aluno adicionado',
-                          viewModel.isEditMode
-                              ? 'O aluno foi editado com sucesso!'
-                              : 'O aluno foi adicionado com sucesso!',
-                        );
-                      },
-                      () {
-                        Navigator.of(context).pop();
-                        DialogUtils.showFailureDialog(
-                          context,
-                          'Erro',
-                          viewModel.isEditMode
-                              ? 'Não foi possível editar aluno!'
-                              : 'Não foi possível adicionar aluno!',
-                        );
-                      },
-                    ),
+                    onPressed: viewModel.isFormLoading
+                        ? null
+                        : () => viewModel.submitForm(
+                            () {
+                              Navigator.of(context).pop();
+                              DialogUtils.showSuccessDialog(
+                                context,
+                                viewModel.isEditMode
+                                    ? 'Aluno editado'
+                                    : 'Aluno adicionado',
+                                viewModel.isEditMode
+                                    ? 'O aluno foi editado com sucesso!'
+                                    : 'O aluno foi adicionado com sucesso!',
+                              );
+                            },
+                            () {
+                              Navigator.of(context).pop();
+                              DialogUtils.showFailureDialog(
+                                context,
+                                'Erro',
+                                viewModel.isEditMode
+                                    ? 'Não foi possível editar aluno!'
+                                    : 'Não foi possível adicionar aluno!',
+                              );
+                            },
+                          ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2E7D8A),
                       padding: const EdgeInsets.symmetric(
