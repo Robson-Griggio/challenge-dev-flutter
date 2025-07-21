@@ -86,14 +86,14 @@ class StudentRepository implements StudentRepositoryInterface {
   }
 
   @override
-  Future<void> updateStudent(UpdateStudentDto student) async {
+  Future<void> updateStudent(String id, UpdateStudentDto student) async {
     try {
       final studentDto = UpdateStudentDto(
         name: student.name,
         email: student.email,
         birthdate: student.birthdate,
       );
-      await _service.updateStudent(studentDto);
+      await _service.updateStudent(id, studentDto);
     } catch (e) {
       throw Exception(
         'Failed to update student in repository: ${e.toString()}',

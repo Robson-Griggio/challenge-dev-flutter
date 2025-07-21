@@ -2,26 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DatePickerFormField extends StatefulWidget {
-  final Function onSaved;
-  const DatePickerFormField({super.key, required this.onSaved});
+  final TextEditingController controller;
+  const DatePickerFormField({super.key, required this.controller});
 
   @override
   State<DatePickerFormField> createState() => _DatePickerFormFieldState();
 }
 
 class _DatePickerFormFieldState extends State<DatePickerFormField> {
-  final TextEditingController _dateController = TextEditingController();
-
   Future<void> _selectDate(BuildContext context) async {
+    DateTime initialDate = DateTime.now();
+    if (widget.controller.text.isNotEmpty) {
+      try {
+        initialDate = DateFormat('dd/MM/yyyy').parse(widget.controller.text);
+      } catch (e) {
+        initialDate = DateTime.now();
+      }
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: initialDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
+
     if (picked != null) {
       setState(() {
-        _dateController.text = DateFormat('dd/MM/yyyy').format(picked);
+        widget.controller.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
@@ -29,7 +37,7 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: _dateController,
+      controller: widget.controller,
       readOnly: true,
       onTap: () => _selectDate(context),
       decoration: InputDecoration(
@@ -46,7 +54,6 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
         }
         return null;
       },
-      onSaved: (newValue) => widget.onSaved(newValue),
     );
   }
 }

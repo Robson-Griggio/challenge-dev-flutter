@@ -47,8 +47,11 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/add',
+      path: '/student/:action',
       builder: (context, state) {
+        final action = state.pathParameters['action']!;
+        final id = state.uri.queryParameters['id'];
+
         return MultiProvider(
           providers: [
             Provider(
@@ -68,6 +71,8 @@ final GoRouter _router = GoRouter(
             builder: (context) {
               final viewModel = StudentFormViewModel(
                 context.read<StudentRepository>(),
+                studentId: id,
+                isEditMode: action == 'edit',
               );
 
               return StudentFormScreen(viewModel: viewModel);

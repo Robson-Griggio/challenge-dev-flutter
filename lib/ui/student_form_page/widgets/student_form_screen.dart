@@ -15,7 +15,9 @@ class StudentFormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF2E7D8A),
-      appBar: DefaultAppBar(title: 'Adicionar Aluno'),
+      appBar: DefaultAppBar(
+        title: viewModel.isEditMode ? 'Editar Aluno' : 'Adicionar Aluno',
+      ),
       body: Container(
         color: Colors.white,
         child: Padding(
@@ -41,14 +43,15 @@ class StudentFormScreen extends StatelessWidget {
                     }
                     return null;
                   },
-                  onSaved: (newValue) => viewModel.name = newValue,
+                  controller: viewModel.nameController,
                 ),
                 const SizedBox(height: 16),
-                DatePickerFormField(
-                  onSaved: (newValue) => viewModel.birthdate = newValue,
-                ),
+                DatePickerFormField(controller: viewModel.birthdateController),
                 const SizedBox(height: 16),
-                CpfFormField(onSaved: (newValue) => viewModel.cpf = newValue),
+                CpfFormField(
+                  controller: viewModel.cpfController,
+                  isEditMode: viewModel.isEditMode,
+                ),
                 SizedBox(height: 16),
                 TextFormField(
                   decoration: InputDecoration(
@@ -57,13 +60,16 @@ class StudentFormScreen extends StatelessWidget {
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  readOnly: viewModel.isEditMode,
                   validator: (value) {
+                    if (viewModel.isEditMode) return null;
+
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira o registro acadêmico.';
                     }
                     return null;
                   },
-                  onSaved: (newValue) => viewModel.academicRecord = newValue,
+                  controller: viewModel.academicRecordController,
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -90,22 +96,34 @@ class StudentFormScreen extends StatelessWidget {
                     }
                     return null;
                   },
-                  onSaved: (newValue) => viewModel.email = newValue,
+                  controller: viewModel.emailController,
                 ),
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
                     onPressed: () => viewModel.submitForm(
-                      () => DialogUtils.showSuccessDialog(
-                        context,
-                        'Aluno adicionado',
-                        'O aluno foi adicionado com sucesso!',
-                      ),
-                      () => DialogUtils.showFailureDialog(
-                        context,
-                        'Erro',
-                        'Não foi possível adicionar aluno',
-                      ),
+                      () {
+                        Navigator.of(context).pop();
+                        DialogUtils.showSuccessDialog(
+                          context,
+                          viewModel.isEditMode
+                              ? 'Aluno editado'
+                              : 'Aluno adicionado',
+                          viewModel.isEditMode
+                              ? 'O aluno foi editado com sucesso!'
+                              : 'O aluno foi adicionado com sucesso!',
+                        );
+                      },
+                      () {
+                        Navigator.of(context).pop();
+                        DialogUtils.showFailureDialog(
+                          context,
+                          'Erro',
+                          viewModel.isEditMode
+                              ? 'Não foi possível editar aluno!'
+                              : 'Não foi possível adicionar aluno!',
+                        );
+                      },
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2E7D8A),

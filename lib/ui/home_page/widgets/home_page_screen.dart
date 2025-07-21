@@ -51,7 +51,12 @@ class HomePageScreen extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 12),
                       child: StudentCard(
                         student: student,
-                        onEdit: () => print('ID: ${student.id}'),
+                        onEdit: () => context.push(
+                          Uri(
+                            path: '/student/edit',
+                            queryParameters: {'id': student.id},
+                          ).toString(),
+                        ),
                         onDelete: () => print('ID: ${student.id}'),
                       ),
                     );
@@ -63,7 +68,7 @@ class HomePageScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/add'),
+        onPressed: () => context.push('/student/add'),
         backgroundColor: Color(0xFF2E7D8A),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text('Adicionar aluno', style: TextStyle(color: Colors.white)),

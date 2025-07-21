@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class CpfFormField extends StatelessWidget {
-  final Function onSaved;
-  const CpfFormField({super.key, required this.onSaved});
+  final TextEditingController controller;
+  final bool isEditMode;
+  const CpfFormField({
+    super.key,
+    required this.controller,
+    required this.isEditMode,
+  });
 
-  // Instância do formatador da máscara para o CPF
   static final _cpfMaskFormatter = MaskTextInputFormatter(
     mask: '###.###.###-##',
-    filter: {"#": RegExp(r'[0-9]')}, // Permite apenas dígitos
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+    initialText: '',
   );
 
   static bool _isValidCpf(String cpf) {
@@ -26,14 +32,19 @@ class CpfFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       inputFormatters: [_cpfMaskFormatter],
       keyboardType: TextInputType.number,
+      maxLength: 14,
       decoration: const InputDecoration(
         labelText: 'CPF*',
         border: OutlineInputBorder(),
         hintText: '000.000.000-00',
+        counterText: '',
       ),
+      readOnly: isEditMode,
       validator: (value) {
+        if (isEditMode) return null;
         if (value == null || value.isEmpty) {
           return 'Por favor, insira o CPF.';
         }
@@ -42,7 +53,6 @@ class CpfFormField extends StatelessWidget {
         }
         return null;
       },
-      onSaved: (newValue) => onSaved(newValue),
     );
   }
 }

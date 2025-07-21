@@ -6,6 +6,6 @@ abstract class StudentRepositoryInterface {
   Future<List<Student>> getAllStudents();
   Future<Student?> getStudentById(String id);
   Future<void> addStudent(AddStudentDto student);
-  Future<void> updateStudent(UpdateStudentDto student);
+  Future<void> updateStudent(String id, UpdateStudentDto student);
   Future<void> deleteStudent(String id);
 }

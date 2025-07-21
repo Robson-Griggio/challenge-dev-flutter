@@ -1,4 +1,4 @@
-class ListStudentDto {
+class GetStudentDto {
   final String id;
   final String name;
   final String cpf;
@@ -7,7 +7,7 @@ class ListStudentDto {
   final DateTime createdAt;
   final DateTime birthdate;
 
-  ListStudentDto({
+  GetStudentDto({
     required this.id,
     required this.name,
     required this.cpf,
@@ -17,8 +17,8 @@ class ListStudentDto {
     required this.birthdate,
   });
 
-  factory ListStudentDto.fromJson(Map<String, dynamic> json) {
-    return ListStudentDto(
+  factory GetStudentDto.fromJson(Map<String, dynamic> json) {
+    return GetStudentDto(
       id: json['id'].toString(),
       name: json['name'].toString(),
       cpf: json['cpf'].toString(),
