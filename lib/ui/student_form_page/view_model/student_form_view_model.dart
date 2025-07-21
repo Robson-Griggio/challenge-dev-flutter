@@ -41,7 +41,7 @@ class StudentFormViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitForm(VoidCallback? callbackDialog) async {
+  Future<void> submitForm(VoidCallback onSuccess, VoidCallback onError) async {
     if (!formKey.currentState!.validate()) return;
 
     formKey.currentState!.save();
@@ -56,10 +56,9 @@ class StudentFormViewModel extends ChangeNotifier {
       );
 
       await _studentRepository.addStudent(student);
-
-      callbackDialog?.call();
+      onSuccess();
     } catch (e) {
-      print('Failed to submit form: $e');
+      onError();
     }
   }
 }

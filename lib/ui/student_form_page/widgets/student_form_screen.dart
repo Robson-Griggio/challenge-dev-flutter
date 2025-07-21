@@ -3,6 +3,7 @@ import 'package:challenge_dev_flutter/ui/core/ui/default_navigation_bar.dart';
 import 'package:challenge_dev_flutter/ui/student_form_page/view_model/student_form_view_model.dart';
 import 'package:challenge_dev_flutter/ui/student_form_page/widgets/cpf_form_field.dart';
 import 'package:challenge_dev_flutter/ui/student_form_page/widgets/date_picker_form_field.dart';
+import 'package:challenge_dev_flutter/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,46 +13,6 @@ class StudentFormScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    VoidCallback? _showSuccessDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: const Text('Aluno adicionado'),
-            content: const Text('O aluno foi adicionado com sucesso!'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Ok'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    // VoidCallback? _showFailureDialog() {
-    //   showDialog(
-    //     context: context,
-    //     builder: (BuildContext ctx) {
-    //       return AlertDialog(
-    //         title: const Text('Aluno adicionado'),
-    //         content: const Text('O aluno foi adicionado com sucesso!'),
-    //         actions: <Widget>[
-    //           TextButton(
-    //             child: const Text('Ok'),
-    //             onPressed: () {
-    //               Navigator.of(ctx).pop();
-    //             },
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   );
-    // }
-
     return Scaffold(
       backgroundColor: Color(0xFF2E7D8A),
       appBar: DefaultAppBar(title: 'Adicionar Aluno'),
@@ -134,7 +95,18 @@ class StudentFormScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () => viewModel.submitForm(_showSuccessDialog),
+                    onPressed: () => viewModel.submitForm(
+                      () => DialogUtils.showSuccessDialog(
+                        context,
+                        'Aluno adicionado',
+                        'O aluno foi adicionado com sucesso!',
+                      ),
+                      () => DialogUtils.showFailureDialog(
+                        context,
+                        'Erro',
+                        'Não foi possível adicionar aluno',
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2E7D8A),
                       padding: const EdgeInsets.symmetric(
