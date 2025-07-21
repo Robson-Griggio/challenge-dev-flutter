@@ -1,7 +1,9 @@
+import 'package:challenge_dev_flutter/ui/core/ui/default_app_bar.dart';
+import 'package:challenge_dev_flutter/ui/core/ui/default_navigation_bar.dart';
 import 'package:challenge_dev_flutter/ui/home_page/view_model/home_page_view_model.dart';
 import 'package:challenge_dev_flutter/ui/home_page/widgets/student_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePageScreen extends StatelessWidget {
   final HomePageViewModel viewModel;
@@ -12,19 +14,7 @@ class HomePageScreen extends StatelessWidget {
     final studentsCommand = viewModel.getAllStudentsCommand;
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: Color(0xFF2E7D8A),
-        elevation: 0,
-        title: Text(
-          'Alunos',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
+      appBar: DefaultAppBar(title: 'Alunos'),
       body: Column(
         children: [
           Expanded(
@@ -61,7 +51,12 @@ class HomePageScreen extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 12),
                       child: StudentCard(
                         student: student,
-                        onEdit: () => print('ID: ${student.id}'),
+                        onEdit: () => context.push(
+                          Uri(
+                            path: '/student/edit',
+                            queryParameters: {'id': student.id},
+                          ).toString(),
+                        ),
                         onDelete: () => print('ID: ${student.id}'),
                       ),
                     );
@@ -73,33 +68,12 @@ class HomePageScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => print('add student'),
+        onPressed: () => context.push('/student/add'),
         backgroundColor: Color(0xFF2E7D8A),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text('Adicionar aluno', style: TextStyle(color: Colors.white)),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {},
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Color(0xFF2E7D8A),
-        unselectedItemColor: Colors.grey[600],
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.help_outline),
-            label: 'Ajuda',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_outlined),
-            label: 'Notificações',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Perfil',
-          ),
-        ],
-      ),
+      bottomNavigationBar: DefaultNavigationbar(),
     );
   }
 }
